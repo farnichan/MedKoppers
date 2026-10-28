@@ -5,6 +5,24 @@ import { createPublicClient } from "./supabase/public";
 import type { StudentQuestion } from "./types";
 
 /**
+ * Picks `count` random questions from the subject's bank. Call per request
+ * (not cached) so every attempt gets a fresh set.
+ */
+export async function drawRandomQuestions(
+  subjectSlug: string,
+  count: number,
+): Promise<StudentQuestion[]> {
+  const bank = await getQuestionBank(subjectSlug);
+  // Fisher–Yates shuffle on a copy, then take the first `count`.
+  const shuffled = [...bank];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, count);
+}
+
+/**
  * Loads every question in a subject, with options, for display.
  * Never selects anything about correct answers (and the public key
  * couldn't read answer_keys anyway).
@@ -12,7 +30,7 @@ import type { StudentQuestion } from "./types";
  * Cached for a few minutes so the page is fast; edits made in the
  * Supabase dashboard show up after the cache refreshes.
  */
-export async function getTestQuestions(
+export async function getQuestionBank(
   subjectSlug: string,
 ): Promise<StudentQuestion[]> {
   "use cache";

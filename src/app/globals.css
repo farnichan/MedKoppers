@@ -1,7 +1,78 @@
 @import "tailwindcss";
 
-/* System fonts: nothing extra to download on slow connections. */
+/*
+ * Design tokens. "Rickshaw art meets meme culture": warm cream paper,
+ * thick ink outlines, hard sticker shadows, and the bright pinks, yellows
+ * and teals of Dhaka rickshaw paintings.
+ * Use via Tailwind classes, e.g. bg-cream, text-ink, bg-pink, shadow-hard.
+ */
+@theme {
+  --color-cream: #fff6e3;      /* page background */
+  --color-paper: #fffdf7;      /* cards */
+  --color-ink: #1b1a17;        /* text, outlines, shadows */
+  --color-muted: #5c574b;      /* secondary text */
+
+  --color-pink: #ff5fa2;       /* main accent / primary buttons */
+  --color-yellow: #ffd23f;     /* highlights, selected answers */
+  --color-teal: #2ec4b6;
+  --color-sky: #8fd3ff;
+  --color-orange: #ff8c42;
+
+  --color-correct: #138a4c;
+  --color-correct-soft: #b9f0cd;
+  --color-wrong: #d7263d;
+  --color-wrong-soft: #ffcfd6;
+
+  --shadow-hard-sm: 2px 2px 0 0 var(--color-ink);
+  --shadow-hard: 4px 4px 0 0 var(--color-ink);
+  --shadow-hard-lg: 6px 6px 0 0 var(--color-ink);
+
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+}
+
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--color-cream);
+  /* Faint dot pattern, like a notebook page. */
+  background-image: radial-gradient(rgb(27 26 23 / 0.09) 1px, transparent 1px);
+  background-size: 22px 22px;
+  color: var(--color-ink);
+}
+
+/* Highlighter-pen mark behind a word. */
+.marker {
+  background: linear-gradient(transparent 12%, var(--color-yellow) 12%, var(--color-yellow) 88%, transparent 88%);
+  padding: 0 0.15em;
+  border-radius: 0.2em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Rickshaw-art style zig-zag strip (pink / yellow / teal). */
+.zigzag {
+  height: 14px;
+  background:
+    linear-gradient(135deg, var(--color-pink) 25%, transparent 25%) -7px 0 / 14px 14px,
+    linear-gradient(225deg, var(--color-pink) 25%, transparent 25%) -7px 0 / 14px 14px,
+    linear-gradient(315deg, var(--color-teal) 25%, transparent 25%) 0 0 / 14px 14px,
+    linear-gradient(45deg, var(--color-teal) 25%, var(--color-yellow) 25%) 0 0 / 14px 14px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wiggle:hover {
+    animation: wiggle 0.4s ease-in-out;
+  }
+  .pop-in {
+    animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+}
+
+@keyframes wiggle {
+  0%, 100% { rotate: 0deg; }
+  25% { rotate: -3deg; }
+  75% { rotate: 3deg; }
+}
+
+@keyframes pop-in {
+  from { scale: 0.6; opacity: 0; }
+  to { scale: 1; opacity: 1; }
 }

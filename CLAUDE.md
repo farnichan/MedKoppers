@@ -8,13 +8,13 @@ The owner is a designer with limited coding experience: explain changes in plain
 
 ## V1 scope (build only this)
 
-A single Pharmacology test page:
-- All Pharmacology MCQs on one scrolling page. Each has question text, an optional image, and usually 4–5 options with exactly one correct.
+A simple landing page (`/`) with a floating frosted-glass navbar whose main CTA, "Practice Test", opens a single Pharmacology test page (`/practice`):
+- Each attempt shows `QUESTIONS_PER_TEST` (10) random Pharmacology MCQs on one scrolling page, drawn from the whole bank. "Try new questions" draws a fresh random set. Each has question text, an optional image, and usually 4–5 options with exactly one correct.
 - Student picks one option per question, taps Submit at the bottom.
-- After submit: each question shows Correct / Wrong / Not answered, the correct option is highlighted, and the score (e.g. 14/20) appears at the top. A "Try again" button resets.
+- After submit: each question shows Correct / Wrong / Not answered, the correct option is highlighted, and the score (e.g. 14/20) appears at the top. 
 - No explanations, accounts/logins, timers, or other subjects. English only.
 - Must work well on phones and load fast on slow mobile data (system fonts, small images, cached question data).
-- Styling is deliberately plain; the real UI will be designed later.
+- Visual design: see "Design system" below.
 
 ## Stack
 
@@ -26,13 +26,20 @@ A single Pharmacology test page:
 ## Folder structure
 
 ```
-src/app/page.tsx          Test page (server component; loads questions)
-src/app/actions.ts        Server Action `submitTest`: marks answers on the server
+src/app/page.tsx          Landing page (static: hero + example question preview)
+src/app/practice/page.tsx Test page (server component; loads questions)
+src/app/actions.ts        Server Actions: `submitTest` (marks on the server), `drawNewQuestions` (fresh random set)
 src/app/layout.tsx        Root layout + metadata
 src/components/TestForm.tsx  Client component: selection, submit, results UI
-src/lib/config.ts         App name, subject slug, bucket name
-src/lib/questions.ts      getTestQuestions(): questions + options, NO answers (cached)
-src/lib/grading.ts        parseAnswers() + gradeTest(): server-only marking
+src/components/Navbar.tsx    Floating frosted-glass navbar (in root layout)
+src/components/OptionRow.tsx Shared answer-option visuals (test page + landing preview)
+src/components/Logo.tsx      Wordmark (uses APP_NAME)
+src/components/ui/           buttonClass() helper, Sticker
+src/components/Footer.tsx    Footer (in root layout)
+src/lib/copy.ts           All playful/Banglish copy + score reactions
+src/lib/config.ts         App name, subject slug, questions per test, bucket name
+src/lib/questions.ts      getQuestionBank() (cached, all questions, NO answers) + drawRandomQuestions() (per request)
+src/lib/grading.ts        parseQuestionIds() + parseAnswers() + gradeTest(): server-only marking
 src/lib/types.ts          Shared types (StudentQuestion has no correctness field)
 src/lib/supabase/public.ts  Client with publishable key (RLS applies)
 src/lib/supabase/admin.ts   Client with secret key (bypasses RLS) — "server-only"
@@ -41,6 +48,21 @@ supabase/seed-images/     Placeholder images uploaded by the seed script
 scripts/seed.mjs          Seeds ~20 dummy Pharmacology MCQs + images (idempotent)
 scripts/db-push.mjs       Applies migrations using SUPABASE_DB_URL
 ```
+
+## Brand & design system
+
+"Kop" is Bangla slang for acing something; MedKoppers = people acing med school. The audience is Bangladeshi public med school students in their early twenties, so the brand is playful and meme-y, not clinical. Visual direction: **rickshaw art meets meme culture**.
+
+- **Voice:** Banglish (Bangla in Roman letters) for flavour text, using BD med-school in-jokes (prof, viva, supple, proxy, Nilkhet sheets, load shedding, cha, Tripathi). Use the casual "tumi" form (kopaiso, koro), not "tui". Keep functional labels clear (e.g. "Your answer", "Correct answer"). Medical content (questions/options) stays in English.
+- **All jokes/flavour text live in `src/lib/copy.ts`** (`COPY`, `scoreReaction()`), never hard-coded in components, so the owner can edit them.
+- **Colours** (`@theme` in `src/app/globals.css`): `cream` (page bg, dotted), `paper` (cards), `ink` (text/outlines/shadows), `muted`, `pink` (primary), `yellow` (highlights, selected answer, score card), `teal`, `sky`, `orange`, `correct`/`correct-soft`, `wrong`/`wrong-soft`.
+- **Shape language:** `border-2 border-ink`, rounded-xl/2xl, hard offset shadows (`shadow-hard-sm`/`shadow-hard`/`shadow-hard-lg`), slight rotations on stickers/cards.
+- **Type:** Bricolage Grotesque (`next/font`), headlines `font-extrabold` with tight tracking.
+- **Components:** `buttonClass({ variant: primary|yellow|plain, size })` (squishes on press), `Sticker` (tilted label), `Logo` (highlights "Kop" in APP_NAME), `.marker` (highlighter), `.zigzag` (rickshaw strip), `.wiggle`/`.pop-in` animations (respect reduced motion).
+- **Navbar:** fixed, floating, frosted glass (`bg-paper/60 backdrop-blur-xl`) with ink outline; on every page via root layout, as is the `Footer`. Pages need ~`pt-28` top padding.
+- Option rows hide the native radio with `sr-only`; the row must stay `relative` or tapping an option makes the page jump.
+- Mobile-first; check every change at 375px wide.
+- Dev gotcha: the dev server sometimes keeps serving stale CSS after `globals.css` changes; restart `npm run dev` if new colours/styles don't appear.
 
 ## Database schema
 
@@ -56,7 +78,7 @@ Schema changes: always add a NEW migration with `npx supabase migration new <nam
 ## Security rules (must not be broken)
 
 1. **Correct answers are never sent to the browser before submission.** Question loading selects only questions/options and uses the publishable key; `answer_keys` is unreadable with that key anyway.
-2. **All marking happens on the server** (`submitTest` → `gradeTest`). The browser sends `{ questionId: optionId }` and receives results; it never decides what is correct. The total comes from the database, not from the browser.
+2. **All marking happens on the server** (`submitTest` → `gradeTest`). The browser sends the IDs of the questions it was shown plus `{ questionId: optionId }`, and receives results; it never decides what is correct. The server only counts IDs that really exist in the subject and looks up answers itself.
 3. Row Level Security is enabled on every table. subjects/questions/options: SELECT for anon + authenticated only. `answer_keys`: no policies and all privileges revoked from anon/authenticated. No public writes anywhere.
 4. The secret (service role) key is used only in `src/lib/supabase/admin.ts` (guarded by `import "server-only"`) and in local scripts. Never prefix it with `NEXT_PUBLIC_`, never import admin.ts from a client component.
 5. Validate anything the browser sends to a Server Action (see `parseAnswers`).
@@ -80,4 +102,4 @@ npm run dev                  # http://localhost:3000
 
 Other commands: `npm run lint`, `npm run build`.
 
-Question data is cached for a few minutes (`cacheLife("minutes")` in `src/lib/questions.ts`), so dashboard edits appear after a short delay (restart `npm run dev` to see them immediately).
+The `/practice` page frame is pre-built; the random question set streams in per request (`connection()` in `src/app/practice/page.tsx`). The question bank itself is cached for a few minutes (`cacheLife("minutes")` in `src/lib/questions.ts`), so dashboard edits appear after a short delay (restart `npm run dev` to see them immediately).
