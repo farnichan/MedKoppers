@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* System fonts: nothing extra to download on slow connections. */
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
