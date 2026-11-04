@@ -1,78 +1,103 @@
 @import "tailwindcss";
 
 /*
- * Design tokens. "Rickshaw art meets meme culture": warm cream paper,
- * thick ink outlines, hard sticker shadows, and the bright pinks, yellows
- * and teals of Dhaka rickshaw paintings.
- * Use via Tailwind classes, e.g. bg-cream, text-ink, bg-pink, shadow-hard.
+ * Design tokens. White and clean, with a faint graph-paper grid, pastel
+ * tints and pixel-art illustrations. The logo's navy is the brand colour.
+ * Use via Tailwind classes, e.g. bg-brand, text-muted, bg-tint-blue.
  */
 @theme {
-  --color-cream: #fff6e3;      /* page background */
-  --color-paper: #fffdf7;      /* cards */
-  --color-ink: #1b1a17;        /* text, outlines, shadows */
-  --color-muted: #5c574b;      /* secondary text */
+  --color-ink: #10121f;         /* main text */
+  --color-muted: #555b6e;       /* secondary text */
+  --color-subtle: #8a8f9c;      /* hints, labels */
+  --color-line: #e6e7ec;        /* borders */
+  --color-grid: #eef0f5;        /* graph-paper lines */
+  --color-soft: #f7f8fa;        /* subtle panels */
 
-  --color-pink: #ff5fa2;       /* main accent / primary buttons */
-  --color-yellow: #ffd23f;     /* highlights, selected answers */
-  --color-teal: #2ec4b6;
-  --color-sky: #8fd3ff;
-  --color-orange: #ff8c42;
+  --color-brand: #0c1892;       /* logo navy: buttons, links, selection */
+  --color-brand-hover: #091273;
+  --color-brand-soft: #eef0fb;
+  --color-lime: #c0ff00;        /* logo accent, use sparingly */
 
-  --color-correct: #138a4c;
-  --color-correct-soft: #b9f0cd;
-  --color-wrong: #d7263d;
-  --color-wrong-soft: #ffcfd6;
+  /* Pastel tints for tags and icon tiles. */
+  --color-tint-blue: #e3e8ff;
+  --color-tint-lime: #effcc7;
+  --color-tint-peach: #ffe6d6;
+  --color-tint-pink: #ffe3ef;
+  --color-tint-cyan: #ddf6ff;
 
-  --shadow-hard-sm: 2px 2px 0 0 var(--color-ink);
-  --shadow-hard: 4px 4px 0 0 var(--color-ink);
-  --shadow-hard-lg: 6px 6px 0 0 var(--color-ink);
+  --color-correct: #13774a;
+  --color-correct-soft: #e9f6ef;
+  --color-wrong: #c42b2b;
+  --color-wrong-soft: #fdeeed;
 
-  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-parkinsans), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-float-shadow: float-shadow 4s ease-in-out infinite;
+  --animate-twinkle: twinkle 2.4s ease-in-out infinite;
+  --animate-blink: blink 2.6s ease-in-out both;
+  --animate-pop: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(-3deg); }
+  }
+  @keyframes float-shadow {
+    0%, 100% { transform: scaleX(1); opacity: 0.45; }
+    50% { transform: scaleX(0.75); opacity: 0.25; }
+  }
+  @keyframes twinkle {
+    0%, 100% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1); opacity: 1; }
+  }
+  /* A grid cell lighting up, holding, then fading away. Stepped, like pixels. */
+  @keyframes blink {
+    0% { opacity: 0; }
+    15%, 70% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes pop {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+}
+
+/* Respect the "reduce motion" accessibility setting. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 body {
-  background-color: var(--color-cream);
-  /* Faint dot pattern, like a notebook page. */
-  background-image: radial-gradient(rgb(27 26 23 / 0.09) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background: #ffffff;
   color: var(--color-ink);
 }
 
-/* Highlighter-pen mark behind a word. */
-.marker {
-  background: linear-gradient(transparent 12%, var(--color-yellow) 12%, var(--color-yellow) 88%, transparent 88%);
-  padding: 0 0.15em;
-  border-radius: 0.2em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+/* Faint graph-paper grid. */
+.graph-paper {
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
-/* Rickshaw-art style zig-zag strip (pink / yellow / teal). */
-.zigzag {
-  height: 14px;
-  background:
-    linear-gradient(135deg, var(--color-pink) 25%, transparent 25%) -7px 0 / 14px 14px,
-    linear-gradient(225deg, var(--color-pink) 25%, transparent 25%) -7px 0 / 14px 14px,
-    linear-gradient(315deg, var(--color-teal) 25%, transparent 25%) 0 0 / 14px 14px,
-    linear-gradient(45deg, var(--color-teal) 25%, var(--color-yellow) 25%) 0 0 / 14px 14px;
+/* Grid texture that fades in from a card's bottom-right corner. */
+.card-grid {
+  position: relative;
+  isolation: isolate;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .wiggle:hover {
-    animation: wiggle 0.4s ease-in-out;
-  }
-  .pop-in {
-    animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  }
-}
-
-@keyframes wiggle {
-  0%, 100% { rotate: 0deg; }
-  25% { rotate: -3deg; }
-  75% { rotate: 3deg; }
-}
-
-@keyframes pop-in {
-  from { scale: 0.6; opacity: 0; }
-  to { scale: 1; opacity: 1; }
+.card-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-image:
+    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(circle at 100% 100%, black, transparent 65%);
 }

@@ -1,60 +1,115 @@
 import Link from "next/link";
 import { OptionContent, optionRowClass, type OptionState } from "@/components/OptionRow";
-import Sticker from "@/components/ui/Sticker";
+import TopicTag from "@/components/TopicTag";
+import PixelArt from "@/components/pixel/PixelArt";
+import BlinkingCells from "@/components/pixel/BlinkingCells";
+import {
+  ANSWER_SHEET,
+  BOLD_CAPSULE,
+  LIGHTNING,
+  PHONE,
+  SPARKLE,
+  SPARKLE_LIME,
+  capsule,
+} from "@/components/pixel/art";
 import { buttonClass } from "@/components/ui/button";
 import { COPY } from "@/lib/copy";
 
-export default function Home() {
-  return (
-    <main className="overflow-x-clip">
-      <Hero />
-      <Relatable />
-      <HowItWorks />
-      <FinalCta />
-    </main>
-  );
-}
+const HERO_CAPSULE = capsule(28);
+const FEATURE_ART = [
+  { rows: ANSWER_SHEET, tint: "bg-tint-blue" },
+  { rows: LIGHTNING, tint: "bg-tint-peach" },
+  { rows: PHONE, tint: "bg-tint-lime" },
+];
 
-function Hero() {
+// Twinkles around the floating capsule: position (as % of the capsule box),
+// size and animation delay.
+const SPARKLES = [
+  { top: "4%", left: "8%", size: 15, delay: "0s", lime: false },
+  { top: "18%", left: "92%", size: 20, delay: "0.8s", lime: true },
+  { top: "78%", left: "4%", size: 20, delay: "1.4s", lime: true },
+  { top: "88%", left: "80%", size: 15, delay: "0.4s", lime: false },
+];
+
+export default function Home() {
   const h = COPY.hero;
   return (
-    <section className="relative mx-auto grid max-w-5xl items-center gap-12 px-5 pt-32 pb-16 sm:pt-40 lg:grid-cols-[1.1fr_1fr] lg:pb-24">
-      <div>
-        <Sticker color="teal" tilt={-4}>
-          {h.sticker}
-        </Sticker>
-        <h1 className="mt-6 text-[3.2rem] leading-[0.95] font-extrabold tracking-[-0.035em] sm:text-7xl">
-          {h.titleTop}
-          <br />
-          {h.titleBottomBefore}
-          <span className="marker inline-block -rotate-2">{h.titleHighlight}</span>
-          {h.titleBottomAfter}
-        </h1>
-        <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">{h.subtitle}</p>
-        <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <Link href="/practice" className={buttonClass({ size: "lg" })}>
-            {h.cta} <span aria-hidden>→</span>
-          </Link>
-          <span className="text-sm font-medium text-muted">{h.ctaNote}</span>
-        </div>
-      </div>
+    <main>
+      {/* Full-screen, two-column hero. The floating navbar sits over its top edge. */}
+      <section className="graph-paper relative flex min-h-svh items-center overflow-hidden border-b border-line">
+        <BlinkingCells keepOutIds={["hero-copy", "hero-card"]} />
 
-      <div className="relative mx-auto w-full max-w-md">
-        <QuestionPreview />
-        {/* Decorative stickers around the card, on larger screens. */}
-        <div aria-hidden className="hidden sm:block">
-          <Sticker color="yellow" tilt={-8} className="absolute -top-5 -left-6">
-            {COPY.floatingStickers[0]}
-          </Sticker>
-          <Sticker color="sky" tilt={6} className="absolute top-1/2 -right-4">
-            {COPY.floatingStickers[1]}
-          </Sticker>
-          <Sticker color="orange" tilt={-5} className="absolute -bottom-6 left-4">
-            {COPY.floatingStickers[2]}
-          </Sticker>
+        <div className="relative mx-auto grid w-full max-w-5xl items-center gap-14 px-5 pt-28 pb-16 md:grid-cols-[1.05fr_1fr] md:gap-10">
+          <div id="hero-copy">
+            <div className="relative">
+              {/* Big soft floating capsule: above the headline on phones, behind it on larger screens. */}
+              <div
+                aria-hidden
+                className="pointer-events-none relative mb-6 w-[130px] md:absolute md:top-[42%] md:left-[32%] md:mb-0 md:w-[230px] md:-translate-x-1/2 md:-translate-y-1/2"
+              >
+                <div className="animate-float">
+                  <PixelArt rows={HERO_CAPSULE} size={300} className="h-auto w-full md:opacity-70" />
+                </div>
+                {SPARKLES.map((sp) => (
+                  <span
+                    key={sp.top + sp.left}
+                    className="animate-twinkle absolute"
+                    style={{ top: sp.top, left: sp.left, animationDelay: sp.delay }}
+                  >
+                    <PixelArt rows={sp.lime ? SPARKLE_LIME : SPARKLE} size={sp.size} />
+                  </span>
+                ))}
+              </div>
+              <h1 className="font-heading relative text-[3.25rem] leading-[1] font-bold tracking-[-0.03em] text-balance md:text-7xl lg:text-[5.75rem]">
+                {h.title}
+              </h1>
+            </div>
+            <p className="mt-5 max-w-md text-lg leading-relaxed font-medium text-pretty text-ink/75 md:mt-9">
+              {h.subtitle}
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <Link href="/practice" className={buttonClass({ size: "lg" })}>
+                <span aria-hidden>▶</span> {h.cta}
+              </Link>
+              <span className="text-sm font-medium text-muted">{h.ctaNote}</span>
+            </div>
+          </div>
+
+          <div id="hero-card" className="relative mx-auto w-full max-w-md">
+            <QuestionPreview />
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 py-20">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="font-heading text-3xl font-bold tracking-[-0.01em] sm:text-4xl">{COPY.featuresTitle}</h2>
+            <p className="mt-2 font-medium text-muted">{COPY.featuresSubtitle}</p>
+          </div>
+          <span className="inline-flex items-center gap-2 rounded-full bg-tint-blue px-3.5 py-1.5 text-sm font-semibold">
+            <PixelArt rows={capsule(12, BOLD_CAPSULE)} size={18} />
+            {h.eyebrow}
+          </span>
+        </div>
+
+        <ul className="grid gap-4 sm:grid-cols-3">
+          {COPY.features.map((f, i) => (
+            <li
+              key={f.title}
+              className="card-grid rounded-2xl border-2 border-line bg-white p-6 transition-[translate,box-shadow,border-color] hover:-translate-y-1 hover:border-ink/20 hover:shadow-[0_6px_0_0_rgb(16_18_31/0.08)]"
+            >
+              <span className={`grid size-14 place-items-center rounded-xl ${FEATURE_ART[i].tint}`}>
+                <PixelArt rows={FEATURE_ART[i].rows} size={36} />
+              </span>
+              <h3 className="font-heading mt-5 text-lg font-semibold">{f.title}</h3>
+              <p className="mt-1.5 leading-relaxed font-medium text-muted">{f.text}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+    </main>
   );
 }
 
@@ -68,11 +123,20 @@ const PREVIEW_OPTIONS: { text: string; state: OptionState }[] = [
 // A static, non-interactive example of a marked question.
 function QuestionPreview() {
   return (
-    <div aria-hidden className="relative rotate-1 rounded-2xl border-2 border-ink bg-paper p-5 shadow-hard-lg">
-      <div className="mb-3 flex items-center justify-between text-xs font-bold">
-        <span className="text-muted">Q7 · Autonomic nervous system</span>
+    <div
+      aria-hidden
+      className="card-grid rounded-2xl border-2 border-line bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_48px_-24px_rgb(12_24_146/0.3)] sm:p-6"
+    >
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <span className="flex items-center gap-2">
+          <span className="rounded-md bg-ink px-2 py-0.5 text-xs font-bold text-white">Q7</span>
+          <TopicTag topic="Autonomic nervous system" />
+        </span>
+        <span className="rounded-full bg-correct-soft px-2.5 py-1 text-xs font-bold text-correct">
+          {COPY.status.correct}
+        </span>
       </div>
-      <p className="mb-4 text-lg leading-snug font-bold">
+      <p className="mb-4 text-[17px] leading-snug font-semibold">
         Which drug reactivates acetylcholinesterase in organophosphate poisoning?
       </p>
       <div className="space-y-2">
@@ -82,77 +146,6 @@ function QuestionPreview() {
           </div>
         ))}
       </div>
-      <span className="absolute -top-4 -right-3 rotate-12 rounded-full border-2 border-ink bg-yellow px-3 py-1.5 text-sm font-extrabold tracking-wide shadow-hard-sm">
-        {COPY.preview.stamp}
-      </span>
     </div>
-  );
-}
-
-function Relatable() {
-  const tilts = [-1.5, 1, -0.5];
-  const colors = ["bg-sky", "bg-yellow", "bg-pink"];
-  return (
-    <section className="mx-auto max-w-5xl px-5 py-16">
-      <h2 className="mb-8 text-4xl font-extrabold tracking-tight">{COPY.relatable.title}</h2>
-      <div className="grid gap-6 sm:grid-cols-3">
-        {COPY.relatable.cards.map((card, i) => (
-          <article
-            key={card.title}
-            style={{ rotate: `${tilts[i]}deg` }}
-            className="rounded-2xl border-2 border-ink bg-paper shadow-hard transition-[rotate] hover:rotate-0"
-          >
-            <h3 className={`rounded-t-[14px] border-b-2 border-ink px-4 py-2.5 font-extrabold ${colors[i]}`}>
-              {card.title}
-            </h3>
-            <div className="space-y-1.5 px-4 py-4 font-medium">
-              {card.lines.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function HowItWorks() {
-  return (
-    <section className="mx-auto max-w-5xl px-5 py-16">
-      <h2 className="mb-8 text-4xl font-extrabold tracking-tight">{COPY.howItWorks.title}</h2>
-      <ol className="grid gap-4 sm:grid-cols-3">
-        {COPY.howItWorks.steps.map((step, i) => (
-          <li key={step.title} className="flex gap-4 rounded-2xl border-2 border-ink bg-paper p-5 shadow-hard">
-            <span
-              aria-hidden
-              className="grid size-12 shrink-0 place-items-center rounded-xl border-2 border-ink bg-cream text-2xl"
-            >
-              {step.emoji}
-            </span>
-            <div>
-              <p className="text-sm font-bold text-muted">Step {i + 1}</p>
-              <h3 className="text-lg font-extrabold">{step.title}</h3>
-              <p className="mt-1 text-muted">{step.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
-function FinalCta() {
-  const c = COPY.finalCta;
-  return (
-    <section className="mx-auto max-w-5xl px-5 pt-8 pb-24">
-      <div className="rounded-3xl border-2 border-ink bg-teal px-6 py-12 text-center shadow-hard-lg">
-        <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">{c.title}</h2>
-        <p className="mx-auto mt-3 max-w-md text-lg font-medium">{c.subtitle}</p>
-        <Link href="/practice" className={buttonClass({ variant: "yellow", size: "lg", className: "mt-8" })}>
-          {c.cta} <span aria-hidden>🚀</span>
-        </Link>
-      </div>
-    </section>
   );
 }

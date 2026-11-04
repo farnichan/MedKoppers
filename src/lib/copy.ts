@@ -1,110 +1,79 @@
-// All the jokes and playful text in one place, so they're easy to edit
-// without touching layout code. Banglish (Bangla in English letters) on
-// purpose: it's how students actually text each other.
+// All user-facing text in one place, so it's easy to edit without touching
+// layout code. Tone: plain, clear and regular for now. No game wording
+// (XP, levels, "game over") and no jokes; those may be added later.
 
-// Note: "10 ta" in a few lines matches QUESTIONS_PER_TEST in config.ts;
-// update both if you change the number.
+import { QUESTIONS_PER_TEST } from "./config";
+
 export const COPY = {
+  nav: {
+    cta: "Take test",
+  },
+
   hero: {
-    sticker: "BD med students only 🩺",
-    titleTop: "Pera nai.",
-    titleBottomBefore: "Prof-e ",
-    titleHighlight: "kop",
-    titleBottomAfter: " koro.",
-    subtitle:
-      "Pharmacology MCQ practice for Bangladeshi med students. 10 ta random question, instant marks, zero login. Cha thanda howar agei shesh.",
-    cta: "Start practice test",
-    ctaNote: "Free. Proxy lagbe na. 😌",
+    eyebrow: "Pharmacology · more subjects coming soon",
+    title: "Ace your prof finals",
+    subtitle: `Exam-style Pharmacology questions for MBBS students in Bangladesh. ${QUESTIONS_PER_TEST} random questions at a time, marked instantly.`,
+    cta: "Take test",
+    ctaNote: "Free. No sign-up needed.",
   },
 
-  // Little stickers scattered around the hero (desktop only).
-  floatingStickers: ["💊 300 ta drug name", "☕ Cha break?", "Sir, eta ki ashbe? 🤔"],
+  featuresTitle: "Everything you need to practise",
+  featuresSubtitle: "Simple, focused MCQ practice. Nothing to install, nothing to sign up for.",
 
-  relatable: {
-    title: "Relatable? 😅",
-    cards: [
-      {
-        title: "Viva board energy",
-        lines: ["Sir: “Atropine poisoning er antidote ki?”", "Me: *forgets own name*"],
-      },
-      {
-        title: "Prof er age raat",
-        lines: ["✅ 300 ta drug name", "✅ 1 ta working brain cell", "❌ Ghum"],
-      },
-      {
-        title: "Load shedding @ 2 AM",
-        lines: ["Exam: 9 AM", "Fan: off", "Motivation: gone", "MedKoppers: still here 💅"],
-      },
-    ],
-  },
-
-  howItWorks: {
-    title: "Kivabe kaj kore?",
-    steps: [
-      { emoji: "🎲", title: "10 ta random MCQ", text: "Prottek bar notun set. Mukhosto kore pass korar scope nai." },
-      { emoji: "📝", title: "Khata joma dao", text: "Answer select koro, submit chapo. Negative marking nai!" },
-      { emoji: "⚡", title: "Instant result", text: "Kon gula kop korle, kon gula bash khaile, shob dekhabe." },
-    ],
-  },
-
-  preview: {
-    stamp: "KOPAISO!",
-  },
-
-  finalCta: {
-    title: "Ready to kop?",
-    subtitle: "Cha banate jotokkhon lage, totokkhone 10 ta question shesh.",
-    cta: "Let's goooo",
-  },
+  features: [
+    {
+      title: "Exam-style questions",
+      text: "Single best answer MCQs written around the topics that come up in professional exams.",
+    },
+    {
+      title: "Instant marking",
+      text: "Submit and see your score straight away, with the correct answer shown for every question.",
+    },
+    {
+      title: "Made for your phone",
+      text: "Works on any phone or computer, with nothing to install.",
+    },
+  ],
 
   footer: {
-    madeWith: "Made with ☕ cha & last-minute pera in Bangladesh.",
-    disclaimer: "Not affiliated with BMDC, DGHS, or your very strict pharma sir.",
+    title: "Start practising today",
+    tagline: "MCQ practice for MBBS students in Bangladesh.",
+    cta: "Take test",
   },
 
   practice: {
-    titleSticker: "💊 10 ta random question",
-    subtitle:
-      "Prottek question e ekta answer select koro, tarpor khata joma dao. Negative marking nai, so confidently guess maro. 😉",
-    loading: "Nilkhet theke sheet photocopy hocche…",
-    empty: "Ekhono kono question nai. Pore check koro!",
-    submit: "Khata joma dao 📝",
-    submitting: "Sir khata check korchen…",
-    unansweredNote: "Faka rakhle marks nai. Negative marking nai, guess maro!",
-    error: "Kichu ekta gondogol hoise 😵 Abar try koro.",
-    tryAgain: "Notun 10 ta question",
-    loadingNew: "Notun set anchi…",
+    kicker: "Progress",
+    title: "Pharmacology",
+    subtitle: `${QUESTIONS_PER_TEST} random questions. Choose one answer for each, then submit to see your score.`,
+    loading: "Loading questions…",
+    empty: "No questions yet. Please check back soon.",
+    submit: "Submit answers",
+    submitting: "Marking…",
+    unansweredNote: "Unanswered questions are marked wrong.",
+    error: "Something went wrong. Please try again.",
+    tryAgain: "Try another set",
+    loadingNew: "Loading…",
   },
 
-  // Encouragement under the progress bar, by how far along the student is.
-  progress(answered: number, total: number) {
-    if (answered === 0) return "Shuru koro, bismillah 🙏";
-    if (answered === total) return "Shob done! Ebar khata joma dao 🎉";
-    if (answered / total >= 0.7) return "Aar ektu! 💪";
-    return "Cholche, cholbe 🚶";
-  },
-
-  // Status labels on each question after marking.
   status: {
-    correct: "Kop! ✓",
-    wrong: "Bhul ✗",
-    skipped: "Skip 👻",
+    correct: "Correct",
+    wrong: "Wrong",
+    skipped: "Not answered",
     notMarked: "Not marked",
   },
 } as const;
 
-/** A meme-y reaction for the score card. */
-export function scoreReaction(score: number, total: number, answered: number) {
+/** Short plain summary under the score on the results screen. */
+export function scoreSummary(score: number, total: number, answered: number) {
+  if (answered === 0) return "You didn't answer any questions.";
+  return `You answered ${score} of ${total} questions correctly.`;
+}
+
+/** 0–3 stars for the results screen. */
+export function starsFor(score: number, total: number) {
   const percent = total ? score / total : 0;
-  if (answered === 0)
-    return { emoji: "👻", title: "Proxy diye exam hoy na mama.", line: "Antoto ekta question to answer koro!" };
-  if (percent === 1)
-    return { emoji: "🐐", title: "KOPAISO MAMA!", line: "Full marks. Tripathi nijeo impressed." };
-  if (percent >= 0.8)
-    return { emoji: "🔥", title: "Joss!", line: "Ward e giye ektu bhab nite paro." };
-  if (percent >= 0.6)
-    return { emoji: "😎", title: "Pass! Supple er bhoy nai.", line: "Ar ektu porle top e chole jabe." };
-  if (percent >= 0.4)
-    return { emoji: "😅", title: "Borderline…", line: "Viva te sweet smile diye manage koro." };
-  return { emoji: "💀", title: "Bash khaiso.", line: "Pera nai. Ek cup cha khao, abar try koro." };
+  if (percent >= 0.9) return 3;
+  if (percent >= 0.6) return 2;
+  if (percent >= 0.3) return 1;
+  return 0;
 }
