@@ -94,6 +94,21 @@ export const COPY = {
     existingAccountLogin: "You already have an account, so we're logging you in.",
     existingAccount: "An account with that email already exists. Log in instead.",
 
+    forgotLink: "Forgot password?",
+    forgotTitle: "Reset your password",
+    forgotSubtitle: "Enter your account email and we'll send you a 6-digit code.",
+    forgotSubmit: "Send code",
+    forgotSubmitting: "Sending…",
+    resetCodeSentTo: (email: string) =>
+      `If ${email} has an account, we've sent a 6-digit code to it. Enter it below with your new password.`,
+    resetNoCodeDev: "Local dev: no code needed. Choose your new password.",
+    newPasswordLabel: "New password",
+    resetSubmit: "Reset password",
+    resetSubmitting: "Resetting…",
+    passwordReused: "Choose a password you haven't used before.",
+    noAccountDev: "No account with that email.",
+    backToLogin: "Back to log in",
+
     hasAccount: "Already have an account?",
     noAccount: "Don't have an account?",
   },

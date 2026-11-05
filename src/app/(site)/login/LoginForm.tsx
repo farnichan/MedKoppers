@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useState } from "react";
 import { checkPassword, resendLoginCode, verifyLoginCode } from "./actions";
 import CodeStep from "@/components/auth/CodeStep";
@@ -74,6 +75,11 @@ export default function LoginForm() {
           className={inputClass()}
         />
       </Field>
+      <p className="-mt-2 text-right text-sm">
+        <Link href="/forgot-password" className="font-semibold text-brand hover:underline">
+          {T.forgotLink}
+        </Link>
+      </p>
 
       {credState?.error && <p className="text-sm font-semibold text-wrong">{credState.error}</p>}
 
