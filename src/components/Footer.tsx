@@ -3,6 +3,7 @@ import Link from "next/link";
 import { APP_NAME } from "@/lib/config";
 import { COPY } from "@/lib/copy";
 import { buttonClass } from "./ui/button";
+import { siteUrl } from "@/lib/urls";
 
 // Thick navy footer that plays on the logo: the footer is the logo's navy
 // square, and the logo's tilted lime and black cards (with the tick) sweep
@@ -27,7 +28,7 @@ export default function Footer() {
           {f.title}
         </h2>
         <p className="mt-2 max-w-xs text-white/75">{f.tagline}</p>
-        <Link href="/practice" className={buttonClass({ variant: "lime", className: "mt-6 self-start" })}>
+        <Link href={siteUrl("/practice")} className={buttonClass({ variant: "lime", className: "mt-6 self-start" })}>
           {f.cta}
         </Link>
         <p className="mt-6 text-sm text-white/60 sm:mt-auto sm:pt-10">© {APP_NAME}</p>

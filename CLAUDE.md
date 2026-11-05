@@ -35,7 +35,7 @@ src/app/layout.tsx        Root layout + metadata
 src/app/signup/           Sign up page: name/email/password -> emailed code -> account confirmed + signed in
 src/app/login/            Log in page: email/password -> emailed code -> signed in
 src/app/home/             Protected page (nothing on it yet) + the Log out action
-src/proxy.ts              Keeps Supabase session cookies refreshed on every request (Next 16's renamed "middleware")
+src/proxy.ts              Sends pages to the right address (site vs app) + refreshes Supabase session cookies on app pages (Next 16's renamed "middleware")
 src/components/TestForm.tsx  Client component: selection, submit, results UI
 src/components/Navbar.tsx    Floating frosted-glass navbar (in root layout): Log in / Sign up
 src/components/OptionRow.tsx Shared answer-option visuals (test page + landing preview)
@@ -50,6 +50,7 @@ src/lib/config.ts         App name, subject slug, questions per test, bucket nam
 src/lib/questions.ts      getQuestionBank() (cached, all questions, NO answers) + drawRandomQuestions() (per request)
 src/lib/grading.ts        parseQuestionIds() + parseAnswers() + gradeTest(): server-only marking
 src/lib/types.ts          Shared types (StudentQuestion has no correctness field)
+src/lib/urls.ts           Site vs app addresses: appUrl(), siteUrl(), APP_PATHS, addressRedirect()
 src/lib/auth.ts           getCurrentUser(): the signed-in user (or null), reads the session cookie
 src/lib/supabase/public.ts    Client with publishable key (RLS applies), no session
 src/lib/supabase/admin.ts     Client with secret key (bypasses RLS) — "server-only"
@@ -107,6 +108,10 @@ There's deliberately no `profiles` table yet: the user's name lives in Supabase 
 - **`/home`** is the only protected route. It checks `getCurrentUser()` itself and redirects to `/login` if there's no session — protection lives there (and in any future protected page/action), not in `src/proxy.ts`, which only keeps the session cookie fresh.
 - Real email delivery needs setup in the **Supabase dashboard** (not in this repo) — see the note left for the owner after this feature was built, or ask Claude again; in short: Authentication → Sign In / Providers → Email → enable "Confirm email"; Authentication → Rate Limits → raise "Emails per hour"; Project Settings → Authentication → SMTP → add Resend's settings.
 
+## Two addresses (public site vs app)
+
+One project serves both addresses. The public site (landing page `/` and the demo test `/practice`) lives on `NEXT_PUBLIC_SITE_URL`; the app pages listed in `APP_PATHS` in `src/lib/urls.ts` (`/login`, `/signup`, `/home`, and future logged-in pages: add them there) live on `NEXT_PUBLIC_APP_URL`. `src/proxy.ts` redirects any page requested on the wrong address, and the app's root `/` goes to `/home`. Links that cross between the two use `appUrl()` / `siteUrl()`. With the env vars unset (local dev) everything stays on one address. Test locally with real-looking hosts (e.g. `medkoppers.test`), not `localhost`/`app.localhost`: Next.js rewrites "localhost" in redirects, which causes a loop that won't happen in production.
+
 ## Security rules (must not be broken)
 
 1. **Correct answers are never sent to the browser before submission.** Question loading selects only questions/options and uses the publishable key; `answer_keys` is unreadable with that key anyway.
@@ -122,6 +127,7 @@ There's deliberately no `profiles` table yet: the user's name lives in Supabase 
 See `.env.example`. Real values live in `.env.local` (git-ignored).
 - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (legacy anon key also works)
 - `SUPABASE_SECRET_KEY` (server only; legacy service_role key also works)
+- `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_APP_URL` (optional, set both in production, e.g. `https://medkoppers.com` and `https://app.medkoppers.com`): see "Two addresses" below. Leave unset locally.
 - `SUPABASE_DB_URL` (optional; Session pooler connection string, only for `npm run db:push`)
 
 ## How to run

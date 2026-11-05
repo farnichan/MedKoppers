@@ -14,6 +14,7 @@ import {
 } from "@/components/pixel/art";
 import { buttonClass } from "@/components/ui/button";
 import { COPY } from "@/lib/copy";
+import { appUrl } from "@/lib/urls";
 
 const HERO_CAPSULE = capsule(28);
 const FEATURE_ART = [
@@ -68,7 +69,7 @@ export default function Home() {
               {h.subtitle}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link href="/signup" className={buttonClass({ size: "lg" })}>
+              <Link href={appUrl("/signup")} className={buttonClass({ size: "lg" })}>
                 {h.cta}
               </Link>
               <Link href="/practice" className={buttonClass({ variant: "text", size: "lg" })}>
