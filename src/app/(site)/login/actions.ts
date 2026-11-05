@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { authErrorMessage } from "@/lib/copy";
+import { skipEmailCodes } from "@/lib/dev-auth";
 import { createServerClient } from "@/lib/supabase/server";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -25,6 +26,9 @@ export async function checkPassword(email: string, password: string): Promise<Ac
     password,
   });
   if (passwordError) return { ok: false, error: authErrorMessage(passwordError.message) };
+
+  // Local dev with SKIP_EMAIL_CODES: the password sign-in is the real one.
+  if (skipEmailCodes) redirect("/home");
 
   await supabase.auth.signOut();
 

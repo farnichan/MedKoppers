@@ -102,12 +102,65 @@ export const COPY = {
     loading: "Loading…",
     logOut: "Log out",
   },
-} as const;
 
-/** A short greeting for the signed-in home screen. */
-export function welcomeMessage(name: string) {
-  return name ? `Welcome, ${name}.` : "Welcome.";
-}
+  // Pages for signed-in students.
+  app: {
+    nav: {
+      dashboard: "Dashboard",
+      history: "History",
+      newTest: "New test",
+      subjects: "Subjects",
+      pharmacology: "Pharmacology",
+      comingSoon: "More subjects soon",
+      menu: "Menu",
+      closeMenu: "Close menu",
+      account: "Account",
+    },
+    dashboard: {
+      title: "Dashboard",
+      testsTaken: "Tests taken",
+      average: "Average score",
+      best: "Best score",
+      questionsAnswered: "Questions answered",
+      lastNote: (date: string) => `Last: ${date}`,
+      lastFiveNote: (percent: number) => `Last 5: ${percent}%`,
+      correctNote: (n: number) => `${n} correct`,
+      chartTitle: "Score history",
+      chartSubtitle: (n: number) => `Your last ${n} ${n === 1 ? "test" : "tests"}`,
+      topicsTitle: "Topics",
+      topicsSubtitle: "Your accuracy per topic, weakest first",
+      otherTopic: "Other",
+      recentTitle: "Recent tests",
+      viewAll: "View all",
+      emptyTitle: "No tests yet",
+      emptyText: "Your scores, history and progress will show up here after your first test.",
+      emptyCta: "Take your first test",
+    },
+    history: {
+      title: "History",
+      subtitle: (n: number) => `${n} ${n === 1 ? "test" : "tests"} taken`,
+    },
+    table: {
+      test: "Test",
+      date: "Date",
+      score: "Score",
+      accuracy: "Accuracy",
+    },
+    test: {
+      exit: "Exit",
+      title: "Pharmacology test",
+      saved: "Saved to your dashboard.",
+      notSaved: "Your answers were marked, but we couldn't save this result.",
+      toDashboard: "Back to dashboard",
+    },
+    results: {
+      title: "Test review",
+      filters: { all: "All", wrong: "Wrong", skipped: "Not answered", correct: "Correct" },
+      noneInFilter: "No questions here.",
+      missingQuestion: "This question has since been removed from the bank.",
+    },
+  },
+} as const;
 
 /** A code was emailed to this address; shown on the OTP step of sign up/login. */
 export function codeSentTo(email: string) {
@@ -150,4 +203,50 @@ export function starsFor(score: number, total: number) {
   if (percent >= 0.6) return 2;
   if (percent >= 0.3) return 1;
   return 0;
+}
+
+/** e.g. "6 Nov 2026", in Bangladesh time. */
+export function formatDay(iso: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Dhaka",
+  }).format(new Date(iso));
+}
+
+/** "Welcome back, Nusrat" (first name only). */
+export function welcomeBack(name: string) {
+  const first = name.trim().split(/\s+/)[0];
+  return first ? `Welcome back, ${first}` : "Welcome back";
+}
+
+/** e.g. "6 Nov 2026, 3:45 pm", in Bangladesh time. */
+export function formatTestDate(iso: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Dhaka",
+  }).format(new Date(iso));
+}
+
+/** Whole-number percentage, e.g. 7 of 10 -> 70. */
+export function percentOf(score: number, total: number) {
+  return total ? Math.round((score / total) * 100) : 0;
+}
+
+/** "Test #12" */
+export function testLabel(number: number) {
+  return `Test #${number}`;
+}
+
+/** Up to two initials for an avatar, e.g. "Farhin Husain" -> "FH". */
+export function initialsOf(name: string, email: string) {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length > 0) return words.slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");
+  return (email[0] ?? "?").toUpperCase();
 }

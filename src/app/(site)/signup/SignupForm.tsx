@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { resendSignupCode, signUp, verifySignupCode } from "./actions";
-import { resendLoginCode, verifyLoginCode } from "@/app/login/actions";
+import { resendLoginCode, verifyLoginCode } from "@/app/(site)/login/actions";
 import CodeStep from "@/components/auth/CodeStep";
 import Field from "@/components/auth/Field";
 import { buttonClass } from "@/components/ui/button";

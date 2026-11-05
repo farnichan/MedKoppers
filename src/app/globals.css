@@ -12,6 +12,7 @@
   --color-line: #e6e7ec;        /* borders */
   --color-grid: #eef0f5;        /* graph-paper lines */
   --color-soft: #f7f8fa;        /* subtle panels */
+  --color-canvas: #f5f6f8;      /* app background behind the sidebar + main panel */
 
   --color-brand: #0c1892;       /* logo navy: buttons, links, selection */
   --color-brand-hover: #091273;

@@ -28,4 +28,8 @@ export type TestResult = {
   score: number;
   total: number;
   results: QuestionResult[];
+  /** Signed-in tests only: the saved attempt's id. */
+  attemptId?: string;
+  /** Signed-in tests only: marking worked but saving didn't. */
+  saveFailed?: boolean;
 };

@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Parkinsans } from "next/font/google";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
 import { APP_NAME } from "@/lib/config";
 import "./globals.css";
 
@@ -30,9 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${dmSans.variable} ${parkinsans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans" suppressHydrationWarning>
-        <Navbar />
         {children}
-        <Footer />
       </body>
     </html>
   );

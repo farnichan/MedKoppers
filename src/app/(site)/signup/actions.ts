@@ -2,8 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { authErrorMessage, COPY } from "@/lib/copy";
+import { skipEmailCodes } from "@/lib/dev-auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@/lib/supabase/server";
-import { checkPassword } from "@/app/login/actions";
+import { checkPassword } from "@/app/(site)/login/actions";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -28,6 +30,8 @@ export async function signUp(name: string, email: string, password: string): Pro
   if (!trimmedEmail) return { ok: false, error: "Please enter your email." };
   if (password.length < 8) return { ok: false, error: "Password must be at least 8 characters." };
 
+  if (skipEmailCodes) return devSignUp(trimmedName, trimmedEmail, password);
+
   const supabase = await createServerClient();
   const { data, error } = await supabase.auth.signUp({
     email: trimmedEmail,
@@ -42,6 +46,25 @@ export async function signUp(name: string, email: string, password: string): Pro
   const login = await checkPassword(trimmedEmail, password);
   if (!login.ok) return { ok: false, error: COPY.auth.existingAccount };
   return { ok: true, mode: "login" };
+}
+
+/**
+ * Local dev with SKIP_EMAIL_CODES only: creates the account already confirmed
+ * (no email sent) and signs straight in. An existing account is treated as a
+ * log in, like the normal flow.
+ */
+async function devSignUp(name: string, email: string, password: string): Promise<SignUpResult> {
+  const { error } = await createAdminClient().auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { name },
+  });
+  if (error && error.code !== "email_exists") return { ok: false, error: authErrorMessage(error.message) };
+
+  // Signs in and redirects to /home if the password is right.
+  const login = await checkPassword(email, password);
+  return login.ok ? { ok: true, mode: "login" } : { ok: false, error: COPY.auth.existingAccount };
 }
 
 /** Confirms the account with the emailed code and signs the user in. */

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import { drawNewQuestions, submitTest } from "@/app/actions";
 import { OptionContent, optionRowClass, type OptionState } from "@/components/OptionRow";
@@ -13,6 +14,36 @@ import type { Answers, QuestionResult, StudentQuestion, TestResult } from "@/lib
 
 const T = COPY.practice;
 
+// "site": the public demo's playful look. "app": the cleaner signed-in app
+// look (focus mode, below a 56px top bar), keeping the game bits as accents.
+const STYLES = {
+  site: {
+    list: "space-y-4",
+    questMap:
+      "sticky top-[84px] z-40 rounded-2xl border border-line bg-white/80 px-4 py-3 backdrop-blur-xl sm:top-[92px]",
+    card: "card-grid scroll-mt-44 rounded-2xl border-2 border-line bg-white p-4 sm:p-5",
+    badge: "rounded-md bg-ink px-2 py-0.5 text-xs font-bold text-white",
+    questionText: "text-[17px]",
+    results:
+      "graph-paper animate-pop relative overflow-hidden rounded-2xl border-2 border-ink/10 bg-white px-6 py-8 text-center shadow-[0_6px_0_0_rgb(16_18_31/0.08)]",
+    resultsTitle: "font-heading text-lg font-semibold text-muted",
+    bigScore: "font-heading text-6xl font-bold tracking-[-0.02em]",
+  },
+  app: {
+    list: "space-y-3",
+    questMap:
+      "sticky top-[68px] z-30 rounded-xl border border-line bg-white/90 px-4 py-3 shadow-[0_1px_2px_rgb(16_18_31/0.04)] backdrop-blur-xl",
+    card: "scroll-mt-40 rounded-xl border border-line bg-white p-4 shadow-[0_1px_2px_rgb(16_18_31/0.03)] sm:p-5",
+    badge: "text-xs font-medium text-subtle tabular-nums",
+    questionText: "text-[15px] sm:text-base",
+    results:
+      "animate-pop relative overflow-hidden rounded-xl border border-line bg-white px-6 py-8 text-center shadow-[0_1px_3px_rgb(16_18_31/0.05)]",
+    resultsTitle: "text-sm font-medium text-muted",
+    bigScore: "text-5xl font-semibold tracking-tight tabular-nums",
+  },
+};
+type Styles = (typeof STYLES)["site"];
+
 // True once the page's JavaScript is running. Before that, a tap on Submit
 // would make the browser do an old-style form submit (reloading the page
 // with a new random set and losing the answers), so inputs stay disabled.
@@ -23,8 +54,17 @@ function useHydrated() {
 
 export default function TestForm({
   questions: initialQuestions,
+  submit = submitTest,
+  dashboardHref,
+  variant = "site",
 }: {
   questions: StudentQuestion[];
+  /** Visual style: the public site's, or the signed-in app's. */
+  variant?: keyof typeof STYLES;
+  /** Server Action that marks the test. Defaults to the public demo's (not saved). */
+  submit?: (questionIds: string[], answers: Answers) => Promise<TestResult>;
+  /** Signed-in tests: shows "saved" + a link back to the dashboard after marking. */
+  dashboardHref?: string;
 }) {
   const [questions, setQuestions] = useState(initialQuestions);
   const [answers, setAnswers] = useState<Answers>({});
@@ -33,6 +73,7 @@ export default function TestForm({
   const [isSubmitting, startSubmit] = useTransition();
   const [isLoadingNew, startLoadingNew] = useTransition();
   const hydrated = useHydrated();
+  const s = STYLES[variant];
 
   const answeredCount = Object.keys(answers).length;
   const unansweredCount = questions.length - answeredCount;
@@ -54,7 +95,7 @@ export default function TestForm({
     setError(null);
     startSubmit(async () => {
       try {
-        const graded = await submitTest(
+        const graded = await submit(
           questions.map((q) => q.id),
           answers,
         );
@@ -84,6 +125,7 @@ export default function TestForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <QuestMap
+        s={s}
         questions={questions}
         answers={answers}
         resultsById={result ? resultsById : null}
@@ -95,13 +137,16 @@ export default function TestForm({
           answered={answeredCount}
           onTryAgain={handleTryAgain}
           isLoading={isLoadingNew}
+          dashboardHref={dashboardHref}
+          s={s}
         />
       )}
 
-      <ol className="space-y-4">
+      <ol className={s.list}>
         {questions.map((question, index) => (
           <QuestionCard
             key={question.id}
+            s={s}
             number={index + 1}
             question={question}
             selectedOptionId={answers[question.id] ?? null}
@@ -150,10 +195,12 @@ export default function TestForm({
  * skipped. Tapping a block scrolls to that question.
  */
 function QuestMap({
+  s,
   questions,
   answers,
   resultsById,
 }: {
+  s: Styles;
   questions: StudentQuestion[];
   answers: Answers;
   resultsById: Map<string, QuestionResult> | null;
@@ -171,7 +218,7 @@ function QuestMap({
   }
 
   return (
-    <div className="sticky top-[84px] z-40 rounded-2xl border border-line bg-white/80 px-4 py-3 backdrop-blur-xl sm:top-[92px]">
+    <div className={s.questMap}>
       <div className="mb-2 flex items-baseline justify-between text-sm font-semibold">
         <span className="font-semibold">{T.kicker}</span>
         <span className="text-muted">
@@ -200,11 +247,15 @@ function ResultsScreen({
   answered,
   onTryAgain,
   isLoading,
+  dashboardHref,
+  s,
 }: {
+  s: Styles;
   result: TestResult;
   answered: number;
   onTryAgain: () => void;
   isLoading: boolean;
+  dashboardHref?: string;
 }) {
   const wrong = result.results.filter((r) => !r.isCorrect && r.selectedOptionId).length;
   const skipped = result.results.filter((r) => !r.selectedOptionId).length;
@@ -214,9 +265,9 @@ function ResultsScreen({
   return (
     <section
       aria-live="polite"
-      className="graph-paper animate-pop relative overflow-hidden rounded-2xl border-2 border-ink/10 bg-white px-6 py-8 text-center shadow-[0_6px_0_0_rgb(16_18_31/0.08)]"
+      className={s.results}
     >
-      <h2 className="font-heading text-lg font-semibold text-muted">Your score</h2>
+      <h2 className={s.resultsTitle}>Your score</h2>
 
       <div className="mt-5 flex items-end justify-center gap-2" aria-label={`${stars} out of 3 stars`}>
         {[0, 1, 2].map((i) => (
@@ -230,7 +281,7 @@ function ResultsScreen({
         ))}
       </div>
 
-      <p className="mt-4 font-heading text-6xl font-bold tracking-[-0.02em]">
+      <p className={`mt-4 ${s.bigScore}`}>
         {result.score}
         <span className="text-subtle">/{result.total}</span>
       </p>
@@ -245,14 +296,27 @@ function ResultsScreen({
         <Stat className="bg-soft text-muted" label={COPY.status.skipped} value={skipped} />
       </dl>
 
-      <button
-        type="button"
-        onClick={onTryAgain}
-        disabled={isLoading}
-        className={buttonClass({ className: "mt-7" })}
-      >
-        {isLoading ? T.loadingNew : T.tryAgain}
-      </button>
+      {dashboardHref && (
+        <p className={`mt-5 text-sm font-semibold ${result.saveFailed ? "text-wrong" : "text-correct"}`}>
+          {result.saveFailed ? COPY.app.test.notSaved : COPY.app.test.saved}
+        </p>
+      )}
+
+      <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={onTryAgain}
+          disabled={isLoading}
+          className={buttonClass()}
+        >
+          {isLoading ? T.loadingNew : T.tryAgain}
+        </button>
+        {dashboardHref && (
+          <Link href={dashboardHref} className={buttonClass({ variant: "secondary" })}>
+            {COPY.app.test.toDashboard}
+          </Link>
+        )}
+      </div>
     </section>
   );
 }
@@ -267,6 +331,7 @@ function Stat({ className, label, value }: { className: string; label: string; v
 }
 
 function QuestionCard({
+  s,
   number,
   question,
   selectedOptionId,
@@ -275,6 +340,7 @@ function QuestionCard({
   disabled,
   onSelect,
 }: {
+  s: Styles;
   number: number;
   question: StudentQuestion;
   selectedOptionId: string | null;
@@ -286,20 +352,20 @@ function QuestionCard({
   return (
     <li
       id={`q-${number}`}
-      className="card-grid scroll-mt-44 rounded-2xl border-2 border-line bg-white p-4 sm:p-5"
+      className={s.card}
     >
       <fieldset disabled={locked || disabled}>
         <legend className="w-full">
           <span className="mb-3 flex items-center justify-between gap-3 text-xs">
             <span className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-ink px-2 py-0.5 text-xs font-bold text-white">
+              <span className={s.badge}>
                 Q{number}
               </span>
               {question.topic && <TopicTag topic={question.topic} />}
             </span>
             {locked && <StatusPill result={result} selectedOptionId={selectedOptionId} />}
           </span>
-          <span className="mb-4 block text-[17px] leading-snug font-semibold">{question.text}</span>
+          <span className={`mb-4 block leading-snug font-semibold ${s.questionText}`}>{question.text}</span>
         </legend>
 
         {question.imageUrl && (

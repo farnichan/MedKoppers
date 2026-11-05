@@ -8,7 +8,7 @@ const MAX_QUESTIONS = 50;
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-const isUuid = (value: unknown): value is string =>
+export const isUuid = (value: unknown): value is string =>
   typeof value === "string" && UUID_RE.test(value);
 
 /** Rejects anything that isn't a plain { questionId: optionId } object of UUIDs. */
