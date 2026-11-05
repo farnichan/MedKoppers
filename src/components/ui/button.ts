@@ -18,6 +18,9 @@ const variants = {
     "bg-white text-ink ring-1 ring-ink/15 hover:bg-soft " +
     "shadow-[inset_0_-1px_0_rgb(16_18_31/0.06),0_1px_2px_rgb(16_18_31/0.08)] " +
     "active:shadow-[inset_0_1px_2px_rgb(16_18_31/0.1)]",
+  // Plain text, no background or border: for a secondary action placed
+  // right next to a primary button (e.g. "Log in" beside "Sign up").
+  text: "text-ink/80 underline-offset-4 hover:text-ink hover:underline",
 };
 
 const sizes = {
