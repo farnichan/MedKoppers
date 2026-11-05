@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { resendSignupCode, signUp, verifySignupCode } from "./actions";
+import { resendLoginCode, verifyLoginCode } from "@/app/login/actions";
 import CodeStep from "@/components/auth/CodeStep";
 import Field from "@/components/auth/Field";
 import { buttonClass } from "@/components/ui/button";
@@ -15,6 +16,8 @@ type FormState = { error: string } | null;
 export default function SignupForm() {
   const [step, setStep] = useState<"details" | "code">("details");
   const [email, setEmail] = useState("");
+  // "login" when the email already had an account and the password matched.
+  const [mode, setMode] = useState<"signup" | "login">("signup");
 
   async function handleDetails(_prev: FormState, formData: FormData): Promise<FormState> {
     const name = String(formData.get("name") ?? "");
@@ -25,14 +28,16 @@ export default function SignupForm() {
     if (!result.ok) return { error: result.error };
 
     setEmail(enteredEmail.trim().toLowerCase());
+    setMode(result.mode);
     setStep("code");
     return null;
   }
 
   async function handleVerify(_prev: FormState, formData: FormData): Promise<FormState> {
     const code = String(formData.get("code") ?? "");
-    const result = await verifySignupCode(email, code);
-    // On success verifySignupCode redirects, so this line only runs on error.
+    const verify = mode === "login" ? verifyLoginCode : verifySignupCode;
+    const result = await verify(email, code);
+    // On success verify redirects, so this line only runs on error.
     if (!result.ok) return { error: result.error };
     return null;
   }
@@ -48,7 +53,8 @@ export default function SignupForm() {
         action={verifyAction}
         pending={verifyPending}
         onChangeEmail={() => setStep("details")}
-        onResend={() => resendSignupCode(email)}
+        notice={mode === "login" ? T.existingAccountLogin : undefined}
+        onResend={() => (mode === "login" ? resendLoginCode(email) : resendSignupCode(email))}
       />
     );
   }

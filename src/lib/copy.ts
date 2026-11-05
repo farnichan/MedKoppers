@@ -91,6 +91,9 @@ export const COPY = {
     resendSent: "Code sent.",
     resendIn: (seconds: number) => `Resend code (${seconds}s)`,
 
+    existingAccountLogin: "You already have an account, so we're logging you in.",
+    existingAccount: "An account with that email already exists. Log in instead.",
+
     hasAccount: "Already have an account?",
     noAccount: "Don't have an account?",
   },

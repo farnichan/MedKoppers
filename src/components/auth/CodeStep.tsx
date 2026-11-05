@@ -17,6 +17,7 @@ export default function CodeStep({
   state,
   action,
   pending,
+  notice,
   onChangeEmail,
   onResend,
 }: {
@@ -24,6 +25,8 @@ export default function CodeStep({
   state: FormState;
   action: (formData: FormData) => void;
   pending: boolean;
+  /** Optional line shown above "We've sent a code to…". */
+  notice?: string;
   onChangeEmail: () => void;
   onResend: () => Promise<ResendResult>;
 }) {
@@ -48,6 +51,7 @@ export default function CodeStep({
 
   return (
     <form action={action} className="mt-6 space-y-4">
+      {notice && <p className="text-sm font-semibold text-ink">{notice}</p>}
       <p className="text-sm font-medium text-muted">{codeSentTo(email)}</p>
       <Field label={T.codeLabel}>
         <input

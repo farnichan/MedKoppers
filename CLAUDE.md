@@ -100,6 +100,7 @@ There's deliberately no `profiles` table yet: the user's name lives in Supabase 
 ## Authentication
 
 - **Sign up** (`/signup`): name + email + password → account is created unconfirmed → a 6-digit code is emailed → entering it confirms the account and signs the user in. Confirming is required (`enable_confirmations = true`); a password alone can't sign in until this is done.
+  - If the email already has a confirmed account, Supabase silently sends nothing (it returns a user with empty `identities`). `signUp` detects this: if the password matches, it sends a login code and the signup form continues as a log in (`mode: "login"`); otherwise it says the account exists.
 - **Log in** (`/login`): email + password → if correct, a 6-digit code is emailed → entering it signs the user in. Password and code are both required, every time (the owner's choice over password-only or code-only).
   - Mechanically, Supabase has no single "password + email code" call, so `src/app/login/actions.ts` checks the password first (immediately signing that attempt back out, since it isn't the real sign-in), then emails the code; entering the code does the real sign-in.
 - **Session**: cookie-based via `@supabase/ssr`. `src/proxy.ts` refreshes it on every request; `src/lib/auth.ts`'s `getCurrentUser()` reads it. Nothing else should read Supabase auth cookies directly.
