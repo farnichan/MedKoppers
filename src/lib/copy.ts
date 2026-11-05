@@ -14,11 +14,10 @@ export const COPY = {
     title: "Ace your prof finals",
     subtitle: `Exam-style Pharmacology questions for MBBS students in Bangladesh. ${QUESTIONS_PER_TEST} random questions at a time, marked instantly.`,
     cta: "Take test",
-    ctaNote: "Free. No sign-up needed.",
   },
 
   featuresTitle: "Everything you need to practise",
-  featuresSubtitle: "Simple, focused MCQ practice. Nothing to install, nothing to sign up for.",
+  featuresSubtitle: "Simple, focused MCQ practice for your professional exams.",
 
   features: [
     {

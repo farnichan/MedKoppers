@@ -28,7 +28,7 @@ export default function Footer() {
         </h2>
         <p className="mt-2 max-w-xs text-white/75">{f.tagline}</p>
         <Link href="/practice" className={buttonClass({ variant: "lime", className: "mt-6 self-start" })}>
-          <span aria-hidden>▶</span> {f.cta}
+          {f.cta}
         </Link>
         <p className="mt-6 text-sm text-white/60 sm:mt-auto sm:pt-10">© {APP_NAME}</p>
       </div>

@@ -124,7 +124,7 @@ export default function TestForm({
           disabled={isLoadingNew}
           className={buttonClass({ size: "lg", className: "mt-4 w-full" })}
         >
-          <span aria-hidden>▶</span> {isLoadingNew ? T.loadingNew : T.tryAgain}
+          {isLoadingNew ? T.loadingNew : T.tryAgain}
         </button>
       ) : (
         <div className="pt-4">
@@ -251,7 +251,7 @@ function ResultsScreen({
         disabled={isLoading}
         className={buttonClass({ className: "mt-7" })}
       >
-        <span aria-hidden>▶</span> {isLoading ? T.loadingNew : T.tryAgain}
+        {isLoading ? T.loadingNew : T.tryAgain}
       </button>
     </section>
   );

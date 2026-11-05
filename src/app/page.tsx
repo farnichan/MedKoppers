@@ -69,9 +69,8 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
               <Link href="/practice" className={buttonClass({ size: "lg" })}>
-                <span aria-hidden>▶</span> {h.cta}
+                {h.cta}
               </Link>
-              <span className="text-sm font-medium text-muted">{h.ctaNote}</span>
             </div>
           </div>
 
