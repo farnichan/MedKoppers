@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  // The dev server logs every Server Action call with its arguments, which
+  // would print passwords from the signup/login actions to the terminal.
+  logging: { serverFunctions: false },
   images: {
     qualities: [75],
     remotePatterns: supabaseUrl
