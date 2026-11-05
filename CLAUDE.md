@@ -8,19 +8,21 @@ The owner is a designer with limited coding experience: explain changes in plain
 
 ## V1 scope (build only this)
 
-A simple landing page (`/`) with a floating frosted-glass navbar whose main CTA, "Practice Test", opens a single Pharmacology test page (`/practice`):
-- Each attempt shows `QUESTIONS_PER_TEST` (10) random Pharmacology MCQs on one scrolling page, drawn from the whole bank. "Try new questions" draws a fresh random set. Each has question text, an optional image, and usually 4–5 options with exactly one correct.
+A simple landing page (`/`) with a floating frosted-glass navbar (Log in / Sign up) and a public, no-account-needed Pharmacology test page (`/practice`), plus accounts:
+- Each test attempt shows `QUESTIONS_PER_TEST` (10) random Pharmacology MCQs on one scrolling page, drawn from the whole bank. "Try new questions" draws a fresh random set. Each has question text, an optional image, and usually 4–5 options with exactly one correct.
 - Student picks one option per question, taps Submit at the bottom.
-- After submit: each question shows Correct / Wrong / Not answered, the correct option is highlighted, and the score (e.g. 14/20) appears at the top. 
-- No explanations, accounts/logins, timers, or other subjects. English only.
+- After submit: each question shows Correct / Wrong / Not answered, the correct option is highlighted, and the score (e.g. 14/20) appears at the top.
+- No explanations, timers, or other subjects. English only.
 - Must work well on phones. Low data use is no longer a priority (owner's call, Nov 2026): rich visuals and animation are fine, within reason.
 - Visual design: see "Design system" below.
+
+**Accounts** (`/signup`, `/login`, `/home`): email + password + name, with a 6-digit emailed code required on both signup (to confirm the email) and login (as a second step after the password). See "Authentication" below. `/home` is a protected page with nothing on it yet besides a welcome message and a Log out button — a foundation for real app features later.
 
 ## Stack
 
 - Next.js 16 (App Router, TypeScript, Cache Components enabled), Tailwind CSS v4, ESLint
-- Supabase: Postgres database + Storage (bucket `question-images`)
-- `@supabase/supabase-js` only (no auth, so no `@supabase/ssr`)
+- Supabase: Postgres database + Storage (bucket `question-images`) + Auth
+- `@supabase/supabase-js` + `@supabase/ssr` (cookie-based sessions for Server Components/Actions)
 - Deploy target: Vercel (not deployed yet)
 
 ## Folder structure
@@ -30,21 +32,29 @@ src/app/page.tsx          Landing page (static: hero + example question preview)
 src/app/practice/page.tsx Test page (server component; loads questions)
 src/app/actions.ts        Server Actions: `submitTest` (marks on the server), `drawNewQuestions` (fresh random set)
 src/app/layout.tsx        Root layout + metadata
+src/app/signup/           Sign up page: name/email/password -> emailed code -> account confirmed + signed in
+src/app/login/            Log in page: email/password -> emailed code -> signed in
+src/app/home/             Protected page (nothing on it yet) + the Log out action
+src/proxy.ts              Keeps Supabase session cookies refreshed on every request (Next 16's renamed "middleware")
 src/components/TestForm.tsx  Client component: selection, submit, results UI
-src/components/Navbar.tsx    Floating frosted-glass navbar (in root layout)
+src/components/Navbar.tsx    Floating frosted-glass navbar (in root layout): Log in / Sign up
 src/components/OptionRow.tsx Shared answer-option visuals (test page + landing preview)
 src/components/Logo.tsx      Logo image (public/logo.svg)
-src/components/ui/           buttonClass() helper
+src/components/ui/           buttonClass(), inputClass() helpers
+src/components/auth/         Field, CodeStep (the "enter the 6-digit code" step shared by signup + login)
 src/components/pixel/        PixelArt renderer, pixel drawings (art.ts), BlinkingCells
 src/components/TopicTag.tsx  Pastel topic pill
 src/components/Footer.tsx    Footer (in root layout)
-src/lib/copy.ts           All user-facing copy + score reactions
+src/lib/copy.ts           All user-facing copy + score reactions + auth copy + authErrorMessage()
 src/lib/config.ts         App name, subject slug, questions per test, bucket name
 src/lib/questions.ts      getQuestionBank() (cached, all questions, NO answers) + drawRandomQuestions() (per request)
 src/lib/grading.ts        parseQuestionIds() + parseAnswers() + gradeTest(): server-only marking
 src/lib/types.ts          Shared types (StudentQuestion has no correctness field)
-src/lib/supabase/public.ts  Client with publishable key (RLS applies)
-src/lib/supabase/admin.ts   Client with secret key (bypasses RLS) — "server-only"
+src/lib/auth.ts           getCurrentUser(): the signed-in user (or null), reads the session cookie
+src/lib/supabase/public.ts    Client with publishable key (RLS applies), no session
+src/lib/supabase/admin.ts     Client with secret key (bypasses RLS) — "server-only"
+src/lib/supabase/server.ts    Client with publishable key + the session cookie (Server Components/Actions)
+src/lib/supabase/middleware.ts  updateSession(): used by src/proxy.ts
 supabase/migrations/      SQL migrations (source of truth for the schema)
 supabase/seed-images/     Placeholder images uploaded by the seed script
 scripts/seed.mjs          Seeds ~20 dummy Pharmacology MCQs + images (idempotent)
@@ -85,6 +95,17 @@ scripts/db-push.mjs       Applies migrations using SUPABASE_DB_URL
 
 Schema changes: always add a NEW migration with `npx supabase migration new <name>`; never edit a migration that has already been applied.
 
+There's deliberately no `profiles` table yet: the user's name lives in Supabase Auth's own `user_metadata` (set via `options.data.name` at signup, read via `getCurrentUser()`). Add a real `profiles` table once there's actual app data to attach to a user.
+
+## Authentication
+
+- **Sign up** (`/signup`): name + email + password → account is created unconfirmed → a 6-digit code is emailed → entering it confirms the account and signs the user in. Confirming is required (`enable_confirmations = true`); a password alone can't sign in until this is done.
+- **Log in** (`/login`): email + password → if correct, a 6-digit code is emailed → entering it signs the user in. Password and code are both required, every time (the owner's choice over password-only or code-only).
+  - Mechanically, Supabase has no single "password + email code" call, so `src/app/login/actions.ts` checks the password first (immediately signing that attempt back out, since it isn't the real sign-in), then emails the code; entering the code does the real sign-in.
+- **Session**: cookie-based via `@supabase/ssr`. `src/proxy.ts` refreshes it on every request; `src/lib/auth.ts`'s `getCurrentUser()` reads it. Nothing else should read Supabase auth cookies directly.
+- **`/home`** is the only protected route. It checks `getCurrentUser()` itself and redirects to `/login` if there's no session — protection lives there (and in any future protected page/action), not in `src/proxy.ts`, which only keeps the session cookie fresh.
+- Real email delivery needs setup in the **Supabase dashboard** (not in this repo) — see the note left for the owner after this feature was built, or ask Claude again; in short: Authentication → Sign In / Providers → Email → enable "Confirm email"; Authentication → Rate Limits → raise "Emails per hour"; Project Settings → Authentication → SMTP → add Resend's settings.
+
 ## Security rules (must not be broken)
 
 1. **Correct answers are never sent to the browser before submission.** Question loading selects only questions/options and uses the publishable key; `answer_keys` is unreadable with that key anyway.
@@ -92,6 +113,8 @@ Schema changes: always add a NEW migration with `npx supabase migration new <nam
 3. Row Level Security is enabled on every table. subjects/questions/options: SELECT for anon + authenticated only. `answer_keys`: no policies and all privileges revoked from anon/authenticated. No public writes anywhere.
 4. The secret (service role) key is used only in `src/lib/supabase/admin.ts` (guarded by `import "server-only"`) and in local scripts. Never prefix it with `NEXT_PUBLIC_`, never import admin.ts from a client component.
 5. Validate anything the browser sends to a Server Action (see `parseAnswers`).
+6. Auth session cookies are only ever read/written through `src/lib/supabase/server.ts` (Server Components/Actions) and `src/lib/supabase/middleware.ts` (proxy). Never read them directly elsewhere.
+7. Every protected page must check `getCurrentUser()` itself and redirect if absent — don't rely on `src/proxy.ts` or a layout for this (see "Authentication" above).
 
 ## Environment variables
 

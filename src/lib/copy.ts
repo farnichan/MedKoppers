@@ -6,14 +6,16 @@ import { QUESTIONS_PER_TEST } from "./config";
 
 export const COPY = {
   nav: {
-    cta: "Take test",
+    logIn: "Log in",
+    signUp: "Sign up",
   },
 
   hero: {
     eyebrow: "Pharmacology · more subjects coming soon",
     title: "Ace your prof finals",
     subtitle: `Exam-style Pharmacology questions for MBBS students in Bangladesh. ${QUESTIONS_PER_TEST} random questions at a time, marked instantly.`,
-    cta: "Take test",
+    cta: "Sign up",
+    demoCta: "Take demo test",
   },
 
   featuresTitle: "Everything you need to practise",
@@ -60,7 +62,77 @@ export const COPY = {
     skipped: "Not answered",
     notMarked: "Not marked",
   },
+
+  auth: {
+    signupTitle: "Create your account",
+    signupSubtitle: "Takes less than a minute.",
+    loginTitle: "Log in",
+    loginSubtitle: "Welcome back.",
+
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+    emailLabel: "Email",
+    emailPlaceholder: "you@example.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "At least 8 characters",
+    currentPasswordPlaceholder: "Your password",
+
+    signupSubmit: "Create account",
+    signupSubmitting: "Creating account…",
+    loginSubmit: "Continue",
+    loginSubmitting: "Checking…",
+
+    codeLabel: "6-digit code",
+    codePlaceholder: "000000",
+    verifySubmit: "Verify and continue",
+    verifySubmitting: "Verifying…",
+    changeEmail: "Use a different email",
+    resend: "Resend code",
+    resendSent: "Code sent.",
+    resendIn: (seconds: number) => `Resend code (${seconds}s)`,
+
+    hasAccount: "Already have an account?",
+    noAccount: "Don't have an account?",
+  },
+
+  home: {
+    loading: "Loading…",
+    logOut: "Log out",
+  },
 } as const;
+
+/** A short greeting for the signed-in home screen. */
+export function welcomeMessage(name: string) {
+  return name ? `Welcome, ${name}.` : "Welcome.";
+}
+
+/** A code was emailed to this address; shown on the OTP step of sign up/login. */
+export function codeSentTo(email: string) {
+  return `We've sent a 6-digit code to ${email}.`;
+}
+
+/** Turns a raw Supabase Auth error message into something a student can act on. */
+export function authErrorMessage(message: string): string {
+  const m = message.toLowerCase();
+  if (m.includes("invalid login credentials")) return "Incorrect email or password.";
+  if (m.includes("email not confirmed")) {
+    return "Please verify your email first. Check your inbox for the code, or sign up again to get a new one.";
+  }
+  if (m.includes("already registered") || m.includes("already exists")) {
+    return "An account with that email already exists. Try logging in instead.";
+  }
+  if (m.includes("password")) return "Password must be at least 8 characters.";
+  if (m.includes("unable to validate email") || m.includes("invalid email")) {
+    return "Please enter a valid email address.";
+  }
+  if (m.includes("rate limit") || m.includes("security purposes") || m.includes("too many")) {
+    return "Too many attempts. Please wait a minute and try again.";
+  }
+  if (m.includes("token") || m.includes("otp") || m.includes("code")) {
+    return "That code is incorrect or has expired. Request a new one.";
+  }
+  return "Something went wrong. Please try again.";
+}
 
 /** Short plain summary under the score on the results screen. */
 export function scoreSummary(score: number, total: number, answered: number) {

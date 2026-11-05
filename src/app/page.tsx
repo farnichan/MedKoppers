@@ -68,8 +68,11 @@ export default function Home() {
               {h.subtitle}
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <Link href="/practice" className={buttonClass({ size: "lg" })}>
+              <Link href="/signup" className={buttonClass({ size: "lg" })}>
                 {h.cta}
+              </Link>
+              <Link href="/practice" className={buttonClass({ variant: "text", size: "lg" })}>
+                {h.demoCta}
               </Link>
             </div>
           </div>

@@ -18,9 +18,14 @@ export default function Navbar() {
         >
           <Logo />
         </Link>
-        <Link href="/practice" className={buttonClass({ size: "sm" })}>
-          {COPY.nav.cta}
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link href="/login" className={buttonClass({ variant: "text", size: "sm" })}>
+            {COPY.nav.logIn}
+          </Link>
+          <Link href="/signup" className={buttonClass({ size: "sm" })}>
+            {COPY.nav.signUp}
+          </Link>
+        </div>
       </nav>
     </header>
   );
