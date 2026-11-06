@@ -17,9 +17,15 @@ export function TestHeader() {
           {COPY.practice.title}
         </h1>
         <p className="mt-1 font-medium text-muted">{COPY.practice.subtitle}</p>
+        <SourceCredit className="mt-2" />
       </div>
     </header>
   );
+}
+
+/** Credits the source of the questions. Shown wherever questions appear. */
+export function SourceCredit({ className = "" }: { className?: string }) {
+  return <p className={`text-xs leading-relaxed text-subtle ${className}`}>{COPY.source.credit}</p>;
 }
 
 export function NoQuestions() {

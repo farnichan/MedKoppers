@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import PageHeader from "@/components/app/PageHeader";
 import QuestionReview from "@/components/QuestionReview";
+import { SourceCredit } from "@/components/TestPageParts";
 import Stars from "@/components/Stars";
 import { buttonClass } from "@/components/ui/button";
 import { getMyAttempt, type AttemptDetail } from "@/lib/attempts";
@@ -88,6 +89,8 @@ async function Review({ id, filter }: { id: string; filter: Filter }) {
             ))}
           </ol>
         )}
+
+        <SourceCredit className="px-1" />
       </main>
     </>
   );

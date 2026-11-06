@@ -9,7 +9,7 @@ const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
 const APP_URL = (process.env.NEXT_PUBLIC_APP_URL ?? "").replace(/\/$/, "");
 
 /** Pages that belong to the app address. Everything else belongs to the public site. */
-const APP_PATHS = ["/login", "/signup", "/forgot-password", "/home", "/test", "/results", "/history"];
+const APP_PATHS = ["/login", "/signup", "/forgot-password", "/home", "/test", "/results", "/history", "/lectures"];
 
 export function isAppPath(pathname: string) {
   return APP_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));

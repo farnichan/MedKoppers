@@ -16,7 +16,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { COPY, formatDay, percentOf, welcomeBack } from "@/lib/copy";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
+  title: "Home",
 };
 
 const T = COPY.app.dashboard;

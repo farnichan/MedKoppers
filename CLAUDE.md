@@ -40,6 +40,7 @@ src/app/(app)/            Signed-in app pages in the app shell (sidebar / mobile
   actions.ts              signOut
   home/                   Dashboard: greeting, stat tiles, score-history chart, start card, recent tests
   history/                All past tests (table)
+  lectures/               Placeholder "Lectures are coming soon" page (sidebar link with a "Soon" label)
   results/[id]/           Review of one past test: summary, filter tabs (?show=wrong|skipped|correct), every question
 src/app/(focus)/          Focus mode (slim top bar with Exit, no sidebar)
   test/                   Signed-in test: TestForm variant="app"; `submitAndSaveTest` marks AND saves the result
@@ -72,6 +73,7 @@ src/lib/supabase/middleware.ts  updateSession(): used by src/proxy.ts
 supabase/migrations/      SQL migrations (source of truth for the schema)
 supabase/seed-images/     Placeholder images uploaded by the seed script
 scripts/seed.mjs          Seeds ~20 dummy Pharmacology MCQs + images (idempotent)
+scripts/import-questions.mjs  Imports MCQs from a CSV (topic, question, A–J, answer, image) + images folder: `npm run import -- file.csv images/`. Checks every row first; idempotent
 scripts/db-push.mjs       Applies migrations using SUPABASE_DB_URL
 ```
 
@@ -80,6 +82,7 @@ scripts/db-push.mjs       Applies migrations using SUPABASE_DB_URL
 "Kop" is Bangla slang for acing something; MedKoppers = people acing med school. Audience: Bangladeshi public med school students in their early twenties.
 
 - **Tone: serious and trustworthy first.** Plain, clear English copy. Wit/humour (incl. Banglish or "brainrot") only in small microcopy such as score reactions or notifications, kept low-key. (A loud meme/rickshaw-art version was tried and rejected as not credible; it's in git history at commit 69596a1.)
+- **Question source credit:** the question bank is from *PreTest Pharmacology, 14th ed.* (McGraw-Hill Education), used with the publisher's permission. `COPY.source.credit` / `<SourceCredit />` must stay visible wherever questions appear (site footer, /practice, /test, results review).
 - **All user-facing text lives in `src/lib/copy.ts`** (`COPY`, `scoreReaction()`), never hard-coded in components.
 - **Two looks: site vs app.** Everything below describes the public site (landing, demo, log in/sign up). The signed-in app (`(app)` + `(focus)`) deliberately looks like a premium product app (Linear/Vercel-style, light only; owner's call, Nov 2026): grey `canvas` background with a sidebar and the page on a white rounded panel (desktop), sticky top bar + menu (phones), breadcrumb `PageHeader` bars, 1px `border-line` borders, `rounded-xl` cards, tiny shadows, small type (text-sm, DM Sans everywhere incl. headings and numbers, `tabular-nums` for figures), Lucide icons (`lucide-react`, size 16, strokeWidth 1.75). Game elements are only small accents there: pixel stars on results, the quest map while testing, a pixel capsule/answer-sheet in tiles and empty states. No graph paper, `card-grid`, `font-heading` or 2px borders in the app. `TestForm` has `variant: "site" | "app"` for this.
 - **Gamified pixel-art look.** MCQs are treated like a game: chunky game buttons with a 3D bottom edge, a sticky "quest map" (one block per question) on the test page, "+10 XP" on correct answers, and a results screen with a title ("Level complete", "Game over"…), 0–3 pixel stars and XP. Keep question/option text in the readable body font.

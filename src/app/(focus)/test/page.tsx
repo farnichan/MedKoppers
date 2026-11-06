@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { submitAndSaveTest } from "./actions";
 import TestForm from "@/components/TestForm";
-import { NoQuestions, QuestionsSkeleton } from "@/components/TestPageParts";
+import { NoQuestions, QuestionsSkeleton, SourceCredit } from "@/components/TestPageParts";
 import { getCurrentUser } from "@/lib/auth";
 import { QUESTIONS_PER_TEST, TEST_SUBJECT_SLUG } from "@/lib/config";
 import { COPY } from "@/lib/copy";
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
 export default function TestPage() {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pt-6 pb-20 sm:pt-8">
-      <p className="mb-5 px-1 text-sm text-muted">{COPY.practice.subtitle}</p>
+      <p className="px-1 text-sm text-muted">{COPY.practice.subtitle}</p>
+      <SourceCredit className="mt-1 mb-5 px-1" />
       <Suspense fallback={<QuestionsSkeleton />}>
         <Questions />
       </Suspense>

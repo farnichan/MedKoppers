@@ -36,6 +36,13 @@ export const COPY = {
     },
   ],
 
+  // Where the questions come from. Used with the publisher's permission; keep
+  // this visible wherever the questions are shown (footer, tests, reviews).
+  source: {
+    credit:
+      "Questions from PreTest Pharmacology: PreTest Self-Assessment and Review, 14th edition (McGraw-Hill Education), used with permission.",
+  },
+
   footer: {
     title: "Start practising today",
     tagline: "MCQ practice for MBBS students in Bangladesh.",
@@ -121,8 +128,10 @@ export const COPY = {
   // Pages for signed-in students.
   app: {
     nav: {
-      dashboard: "Dashboard",
+      dashboard: "Home",
       history: "History",
+      lectures: "Lectures",
+      soon: "Soon",
       newTest: "New test",
       subjects: "Subjects",
       pharmacology: "Pharmacology",
@@ -132,7 +141,7 @@ export const COPY = {
       account: "Account",
     },
     dashboard: {
-      title: "Dashboard",
+      title: "Home",
       testsTaken: "Tests taken",
       average: "Average score",
       best: "Best score",
@@ -151,6 +160,12 @@ export const COPY = {
       emptyText: "Your scores, history and progress will show up here after your first test.",
       emptyCta: "Take your first test",
     },
+    lectures: {
+      title: "Lectures",
+      heading: "Lectures are coming soon",
+      text: "Short, exam-focused Pharmacology lectures to go with your practice tests. We'll let you know when they're ready.",
+      cta: "Practise in the meantime",
+    },
     history: {
       title: "History",
       subtitle: (n: number) => `${n} ${n === 1 ? "test" : "tests"} taken`,
@@ -164,9 +179,9 @@ export const COPY = {
     test: {
       exit: "Exit",
       title: "Pharmacology test",
-      saved: "Saved to your dashboard.",
+      saved: "Saved to your history.",
       notSaved: "Your answers were marked, but we couldn't save this result.",
-      toDashboard: "Back to dashboard",
+      toDashboard: "Back to home",
     },
     results: {
       title: "Test review",

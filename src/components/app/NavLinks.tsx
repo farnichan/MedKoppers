@@ -1,14 +1,15 @@
 "use client";
 
-import { History, LayoutDashboard } from "lucide-react";
+import { History, House, PlayCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { COPY } from "@/lib/copy";
 
 const ITEMS = [
-  { href: "/home", label: COPY.app.nav.dashboard, icon: LayoutDashboard },
+  { href: "/home", label: COPY.app.nav.dashboard, icon: House },
   { href: "/history", label: COPY.app.nav.history, icon: History },
-];
+  { href: "/lectures", label: COPY.app.nav.lectures, icon: PlayCircle, badge: COPY.app.nav.soon },
+] as { href: string; label: string; icon: typeof History; badge?: string }[];
 
 function isActive(href: string, pathname: string) {
   if (href === "/history") return pathname === "/history" || pathname.startsWith("/results/");
@@ -31,7 +32,7 @@ export function NavLinksFallback() {
 function NavList({ pathname }: { pathname: string }) {
   return (
     <nav aria-label="Main" className="space-y-0.5">
-      {ITEMS.map(({ href, label, icon: Icon }) => {
+      {ITEMS.map(({ href, label, icon: Icon, badge }) => {
         const active = isActive(href, pathname);
         return (
           <Link
@@ -46,6 +47,11 @@ function NavList({ pathname }: { pathname: string }) {
           >
             <Icon aria-hidden size={16} strokeWidth={1.75} className={active ? "text-brand" : ""} />
             {label}
+            {badge && (
+              <span className="ml-auto rounded-full bg-ink/[0.06] px-1.5 py-px text-[11px] font-medium text-subtle">
+                {badge}
+              </span>
+            )}
           </Link>
         );
       })}

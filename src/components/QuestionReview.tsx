@@ -27,7 +27,7 @@ export default function QuestionReview({
 
       {question ? (
         <>
-          <p className="mb-4 text-[15px] leading-snug font-semibold sm:text-base">{question.text}</p>
+          <p className="mb-4 text-[15px] leading-snug font-semibold whitespace-pre-line sm:text-base">{question.text}</p>
           {question.imageUrl && (
             <Image
               src={question.imageUrl}

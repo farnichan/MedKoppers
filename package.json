@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:push": "node --env-file=.env.local scripts/db-push.mjs",
-    "seed": "node --env-file=.env.local scripts/seed.mjs"
+    "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "import": "node --env-file=.env.local scripts/import-questions.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

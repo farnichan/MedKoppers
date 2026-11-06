@@ -13,9 +13,9 @@ export default function Footer() {
   return (
     <footer className="relative mt-auto overflow-hidden rounded-t-[2.5rem] bg-brand text-white">
       {/* Positioned so the tick stays fully visible; text sits clear on the left/top. */}
-      <LogoCards className="pointer-events-none absolute top-[350px] -right-[6%] w-[360px] sm:top-[-132px] sm:-right-[4%] sm:w-[600px]" />
+      <LogoCards className="pointer-events-none absolute top-[440px] -right-[6%] w-[360px] sm:top-[-132px] sm:-right-[4%] sm:w-[600px]" />
 
-      <div className="relative mx-auto flex min-h-[650px] max-w-5xl flex-col px-6 pt-14 pb-10 sm:min-h-[440px] sm:pt-16">
+      <div className="relative mx-auto flex min-h-[740px] max-w-5xl flex-col px-6 pt-14 pb-10 sm:min-h-[440px] sm:pt-16">
         <Image
           src="/logo-mark.svg"
           alt={APP_NAME}
@@ -32,6 +32,7 @@ export default function Footer() {
           {f.cta}
         </Link>
         <p className="mt-6 text-sm text-white/60 sm:mt-auto sm:pt-10">© {APP_NAME}</p>
+        <p className="mt-2 max-w-sm text-xs leading-relaxed text-white/50">{COPY.source.credit}</p>
       </div>
     </footer>
   );
