@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 // Signed-in students use /test instead, which saves to their dashboard.
 export default function PracticePage() {
   return (
-    <main className="mx-auto w-full max-w-2xl px-4 pt-28 pb-20 sm:pt-32">
+    <main className="mx-auto w-full max-w-2xl px-5 pt-28 pb-20 sm:pt-32">
       <TestHeader />
       <Suspense fallback={<QuestionsSkeleton />}>
         <Questions />

@@ -16,7 +16,7 @@ export default function PageHeader({
     // On phones the top bar already has "New test", and a lone title would
     // just repeat the page heading, so the bar only shows for breadcrumbs.
     <div
-      className={`h-12 items-center justify-between gap-3 border-b border-line px-4 sm:px-6 ${
+      className={`h-12 items-center justify-between gap-3 border-b border-line px-5 sm:px-6 ${
         crumbs.length > 1 ? "flex" : "hidden lg:flex"
       }`}
     >

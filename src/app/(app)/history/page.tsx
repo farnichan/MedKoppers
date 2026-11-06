@@ -28,7 +28,7 @@ export default function HistoryPage() {
           </Link>
         }
       />
-      <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto w-full max-w-5xl px-5 py-6 sm:px-6 sm:py-8">
         <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-ink/[0.04]" />}>
           <History />
         </Suspense>

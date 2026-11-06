@@ -68,7 +68,7 @@ async function Review({ id, filter }: { id: string; filter: Filter }) {
           </Link>
         }
       />
-      <main className="mx-auto w-full max-w-3xl space-y-5 px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto w-full max-w-3xl space-y-5 px-5 py-6 sm:px-6 sm:py-8">
         <Summary attempt={attempt} />
 
         <FilterTabs id={attempt.id} active={filter} answers={attempt.answers} />
@@ -151,7 +151,7 @@ function Summary({ attempt }: { attempt: AttemptDetail }) {
 
 function FilterTabs({ id, active, answers }: { id: string; active: Filter; answers: QuestionResult[] }) {
   return (
-    <nav aria-label="Filter questions" className="flex gap-0.5 overflow-x-auto rounded-lg bg-ink/[0.04] p-1 sm:gap-1">
+    <nav aria-label="Filter questions" className="grid grid-cols-2 gap-1 rounded-lg bg-ink/[0.04] p-1 sm:flex">
       {(Object.keys(FILTERS) as Filter[]).map((f) => {
         const isActive = f === active;
         return (
@@ -161,7 +161,7 @@ function FilterTabs({ id, active, answers }: { id: string; active: Filter; answe
             scroll={false}
             replace
             aria-current={isActive ? "page" : undefined}
-            className={`flex h-8 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[13px] font-medium whitespace-nowrap transition-colors sm:px-3 sm:text-sm ${
+            className={`flex h-9 items-center justify-between gap-1.5 rounded-md px-3 text-[13px] font-medium whitespace-nowrap transition-colors sm:h-8 sm:shrink-0 sm:justify-start sm:text-sm ${
               isActive ? "bg-white text-ink shadow-[0_1px_2px_rgb(16_18_31/0.08)]" : "text-muted hover:text-ink"
             }`}
           >
@@ -179,7 +179,7 @@ function ReviewSkeleton() {
   return (
     <>
       <div className="h-12 border-b border-line" />
-      <div aria-busy aria-label={COPY.home.loading} className="mx-auto max-w-3xl space-y-5 px-4 py-6 sm:px-6 sm:py-8">
+      <div aria-busy aria-label={COPY.home.loading} className="mx-auto max-w-3xl space-y-5 px-5 py-6 sm:px-6 sm:py-8">
         <div className={`h-40 ${block}`} />
         <div className={`h-10 ${block}`} />
         <div className={`h-56 ${block}`} />

@@ -11,7 +11,7 @@ export default function TestsTable({ attempts }: { attempts: AttemptSummary[] })
   return (
     <div className="overflow-hidden rounded-xl border border-line bg-white">
       <div
-        className={`hidden h-9 items-center gap-4 border-b border-line bg-soft px-4 text-xs font-medium text-subtle sm:grid ${COLS}`}
+        className={`hidden h-9 items-center gap-4 border-b border-line bg-soft px-5 text-xs font-medium text-subtle sm:grid ${COLS}`}
       >
         <span>{t.test}</span>
         <span>{t.date}</span>
@@ -26,7 +26,7 @@ export default function TestsTable({ attempts }: { attempts: AttemptSummary[] })
             <li key={a.id}>
               <Link
                 href={`/results/${a.id}`}
-                className={`grid min-h-12 items-center gap-4 px-4 py-2.5 text-sm transition-colors hover:bg-soft focus-visible:bg-soft focus-visible:outline-none ${COLS}`}
+                className={`grid min-h-12 items-center gap-4 px-5 py-3 text-sm transition-colors hover:bg-soft focus-visible:bg-soft focus-visible:outline-none ${COLS}`}
               >
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{testLabel(a.number)}</span>

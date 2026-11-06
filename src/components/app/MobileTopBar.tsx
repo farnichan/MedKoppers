@@ -25,7 +25,7 @@ export default function MobileTopBar({
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-white/90 backdrop-blur-xl lg:hidden">
-      <div className="flex h-14 items-center justify-between gap-3 px-4">
+      <div className="flex h-14 items-center justify-between gap-3 px-5">
         <Link href="/home" onClick={() => setOpen(false)} className="rounded-md focus-visible:outline-2 focus-visible:outline-brand">
           <Logo height={22} />
         </Link>
@@ -40,9 +40,9 @@ export default function MobileTopBar({
             aria-controls="app-menu"
             aria-label={open ? t.closeMenu : t.menu}
             onClick={() => setOpen(!open)}
-            className="grid size-8 place-items-center rounded-md text-muted transition-colors hover:bg-ink/[0.05] hover:text-ink focus-visible:outline-2 focus-visible:outline-brand"
+            className="-mr-2 grid size-10 place-items-center rounded-md text-muted transition-colors hover:bg-ink/[0.05] hover:text-ink focus-visible:outline-2 focus-visible:outline-brand"
           >
-            {open ? <X aria-hidden size={18} /> : <Menu aria-hidden size={18} />}
+            {open ? <X aria-hidden size={20} /> : <Menu aria-hidden size={20} />}
           </button>
         </div>
       </div>

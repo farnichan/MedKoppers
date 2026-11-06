@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ForgotPasswordPage() {
   const t = COPY.auth;
   return (
-    <main className="mx-auto flex min-h-svh w-full max-w-md flex-col justify-center px-4 pt-28 pb-16">
+    <main className="mx-auto flex min-h-svh w-full max-w-md flex-col justify-center px-5 pt-28 pb-16">
       <Suspense fallback={null}>
         <RedirectIfSignedIn />
       </Suspense>

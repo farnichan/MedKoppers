@@ -19,7 +19,7 @@ export default function LecturesPage() {
   return (
     <>
       <PageHeader crumbs={[{ label: T.title }]} />
-      <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto w-full max-w-5xl px-5 py-6 sm:px-6 sm:py-8">
         <Suspense fallback={null}>
           <RequireUser />
         </Suspense>

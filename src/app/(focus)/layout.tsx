@@ -8,7 +8,7 @@ export default function FocusLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-svh bg-canvas">
       <header className="sticky top-0 z-40 border-b border-line bg-white/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-4">
+        <div className="mx-auto flex h-14 max-w-2xl items-center gap-3 px-5">
           <Link
             href="/home"
             className="-ml-2 flex h-8 items-center gap-1.5 rounded-md px-2 text-sm font-medium text-muted transition-colors hover:bg-ink/[0.05] hover:text-ink focus-visible:outline-2 focus-visible:outline-brand"

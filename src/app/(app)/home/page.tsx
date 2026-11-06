@@ -36,7 +36,7 @@ export default function DashboardPage() {
           </Link>
         }
       />
-      <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="mx-auto w-full max-w-5xl px-5 py-6 sm:px-6 sm:py-8">
         <Suspense fallback={<DashboardSkeleton />}>
           <Dashboard />
         </Suspense>
@@ -61,7 +61,7 @@ async function Dashboard() {
         <>
           <Stats attempts={attempts} totalCount={totalCount} />
           <div className="grid gap-4 lg:grid-cols-3">
-            <section className="rounded-xl border border-line bg-white p-4 sm:p-5 lg:col-span-2">
+            <section className="rounded-xl border border-line bg-white p-5 lg:col-span-2">
               <h2 className="text-sm font-semibold">{T.chartTitle}</h2>
               <p className="mt-0.5 mb-5 text-xs text-subtle">
                 {T.chartSubtitle(Math.min(attempts.length, CHART_TESTS))}
@@ -109,7 +109,7 @@ function Stats({ attempts, totalCount }: { attempts: AttemptSummary[]; totalCoun
 
 function TopicsCard({ topics }: { topics: TopicStat[] }) {
   return (
-    <section className="rounded-xl border border-line bg-white p-4 sm:p-5">
+    <section className="rounded-xl border border-line bg-white p-5">
       <h2 className="text-sm font-semibold">{T.topicsTitle}</h2>
       <p className="mt-0.5 mb-4 text-xs text-subtle">{T.topicsSubtitle}</p>
       <ul className="space-y-3.5">

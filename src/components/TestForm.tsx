@@ -365,7 +365,7 @@ function QuestionCard({
             </span>
             {locked && <StatusPill result={result} selectedOptionId={selectedOptionId} />}
           </span>
-          <span className={`mb-4 block leading-snug font-semibold whitespace-pre-line ${s.questionText}`}>{question.text}</span>
+          <span className={`mb-4 block leading-normal font-medium whitespace-pre-line ${s.questionText}`}>{question.text}</span>
         </legend>
 
         {question.imageUrl && (
